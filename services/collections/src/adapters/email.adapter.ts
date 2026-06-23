@@ -1,0 +1,2 @@
+// Adaptador Email. TODO.
+export {};

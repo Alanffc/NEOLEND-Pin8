@@ -1,0 +1,2 @@
+// Adaptador SMS. TODO.
+export {};

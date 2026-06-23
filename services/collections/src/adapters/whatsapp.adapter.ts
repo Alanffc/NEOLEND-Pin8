@@ -1,0 +1,2 @@
+// Adaptador WhatsApp. TODO.
+export {};

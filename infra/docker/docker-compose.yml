@@ -1,0 +1,171 @@
+version: "3.9"
+
+# NeoLend - orquestación de todos los microservicios.
+# Cada servicio tiene su PROPIA base de datos (DB-per-service).
+# Event Bus = RabbitMQ. Caché del buró = Redis.
+
+name: neolend
+
+x-pg-defaults: &pg-defaults
+  image: postgres:16-alpine
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U neolend"]
+    interval: 5s
+    timeout: 3s
+    retries: 10
+
+services:
+  # ---------- Infraestructura compartida ----------
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    ports: ["5672:5672", "15672:15672"]
+    environment:
+      RABBITMQ_DEFAULT_USER: neolend
+      RABBITMQ_DEFAULT_PASS: neolend
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+    command: ["redis-server", "--appendonly", "yes"]
+
+  # ---------- Bases de datos (una por servicio) ----------
+  db-loan:        { <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: loan }, ports: ["5433:5432"] }
+  db-scoring:     { <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: scoring }, ports: ["5434:5432"] }
+  db-credit:      { <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: credit }, ports: ["5435:5432"] }
+  db-disbursement:{ <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: disbursement }, ports: ["5436:5432"] }
+  db-collections: { <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: collections }, ports: ["5437:5432"] }
+  db-investor:    { <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: investor }, ports: ["5438:5432"] }
+  db-gamification:{ <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: gamification }, ports: ["5439:5432"] }
+  db-fraud:       { <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: fraud }, ports: ["5440:5432"] }
+  db-audit:       { <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: audit }, ports: ["5441:5432"] }
+
+  # ---------- Microservicios ----------
+  api-gateway:
+    build: ../../services/api-gateway
+    ports: ["8080:8080"]
+    environment:
+      LOAN_URL: http://loan-application:3001
+      SCORING_URL: http://scoring-engine:8001
+      CREDIT_URL: http://credit-ledger:3003
+      DISBURSEMENT_URL: http://disbursement:3004
+      COLLECTIONS_URL: http://collections:3005
+      INVESTOR_URL: http://investor-portal:3006
+      GAMIFICATION_URL: http://gamification:3007
+      FRAUD_URL: http://fraud-detection:8002
+      AUDIT_URL: http://audit-trail:3008
+    depends_on: [loan-application, scoring-engine, credit-ledger]
+
+  loan-application:
+    build: ../../services/loan-application
+    ports: ["3001:3001"]
+    environment:
+      DATABASE_URL: postgres://neolend:neolend@db-loan:5432/loan
+      AMQP_URL: amqp://neolend:neolend@rabbitmq:5672
+      SCORING_URL: http://scoring-engine:8001
+      FRAUD_URL: http://fraud-detection:8002
+      CREDIT_URL: http://credit-ledger:3003
+    depends_on:
+      db-loan: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+
+  scoring-engine:
+    build: ../../services/scoring-engine
+    ports: ["8001:8001"]
+    environment:
+      DATABASE_URL: postgres://neolend:neolend@db-scoring:5432/scoring
+      BUREAU_URL: http://bureau-adapter:3002
+      MODEL_COLOR: blue   # blue/green deployment del modelo ML
+    depends_on:
+      db-scoring: { condition: service_healthy }
+
+  bureau-adapter:
+    build: ../../services/bureau-adapter
+    ports: ["3002:3002"]
+    environment:
+      REDIS_URL: redis://redis:6379
+      BUREAU_SOAP_URL: http://bureau-soap-mock:9000/ws
+      CB_FAILURE_THRESHOLD: "5"
+      CB_TIMEOUT_MS: "5000"
+      CB_RESET_MS: "30000"
+    depends_on: [redis]
+
+  credit-ledger:
+    build: ../../services/credit-ledger
+    ports: ["3003:3003"]
+    environment:
+      DATABASE_URL: postgres://neolend:neolend@db-credit:5432/credit
+      AMQP_URL: amqp://neolend:neolend@rabbitmq:5672
+      AUDIT_URL: http://audit-trail:3008
+    depends_on:
+      db-credit: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+
+  disbursement:
+    build: ../../services/disbursement
+    ports: ["3004:3004"]
+    environment:
+      DATABASE_URL: postgres://neolend:neolend@db-disbursement:5432/disbursement
+      AMQP_URL: amqp://neolend:neolend@rabbitmq:5672
+    depends_on:
+      db-disbursement: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+
+  collections:
+    build: ../../services/collections
+    ports: ["3005:3005"]
+    environment:
+      DATABASE_URL: postgres://neolend:neolend@db-collections:5432/collections
+      AMQP_URL: amqp://neolend:neolend@rabbitmq:5672
+    depends_on:
+      db-collections: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+
+  investor-portal:
+    build: ../../services/investor-portal
+    ports: ["3006:3006"]
+    environment:
+      DATABASE_URL: postgres://neolend:neolend@db-investor:5432/investor
+      AMQP_URL: amqp://neolend:neolend@rabbitmq:5672
+    depends_on:
+      db-investor: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+
+  gamification:
+    build: ../../services/gamification
+    ports: ["3007:3007"]
+    environment:
+      DATABASE_URL: postgres://neolend:neolend@db-gamification:5432/gamification
+      AMQP_URL: amqp://neolend:neolend@rabbitmq:5672
+    depends_on:
+      db-gamification: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+
+  fraud-detection:
+    build: ../../services/fraud-detection
+    ports: ["8002:8002"]
+    environment:
+      DATABASE_URL: postgres://neolend:neolend@db-fraud:5432/fraud
+      DATA_RESIDENCY: "on-prem"   # biometría nunca sale del país
+    depends_on:
+      db-fraud: { condition: service_healthy }
+
+  audit-trail:
+    build: ../../services/audit-trail
+    ports: ["3008:3008"]
+    environment:
+      DATABASE_URL: postgres://neolend:neolend@db-audit:5432/audit
+      AMQP_URL: amqp://neolend:neolend@rabbitmq:5672
+      SIGNING_KEY_PATH: /run/secrets/audit_signing_key
+    depends_on:
+      db-audit: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+
+networks:
+  default:
+    name: neolend-net
