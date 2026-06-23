@@ -5,7 +5,8 @@ import shap
 from sklearn.ensemble import RandomForestRegressor
 
 # Configurable Model Version for Blue/Green verification
-MODEL_VERSION = os.getenv("MODEL_VERSION", "v1-blue")
+MODEL_COLOR = os.getenv("MODEL_COLOR", "blue")
+MODEL_VERSION = f"v1-{MODEL_COLOR}"
 
 # Feature names mapped to alternative and traditional data sources
 FEATURE_NAMES = [
