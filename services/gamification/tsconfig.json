@@ -5,8 +5,15 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "outDir": "./dist",
+    "rootDir": "./src",
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "strict": false,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "removeComments": false,
+    "sourceMap": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
