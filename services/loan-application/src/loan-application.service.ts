@@ -40,9 +40,11 @@ export class LoanApplicationService {
     this.logger.log(
       `Solicitud ${applicationId} creada (monto=$${dto.amount}, DNI=${this.maskDni(dto.dni)})`,
     );
+    console.log(`[LoanApp] nueva solicitud insertada en DB → id=${applicationId}`);
 
     // Rama de aprobación automática para montos pequeños
     if (dto.amount <= AUTO_APPROVE_MAX_AMOUNT) {
+      console.log(`[LoanApp] monto ≤ $${AUTO_APPROVE_MAX_AMOUNT} → iniciando auto-approve`);
       void this.runAutoApprove(applicationId, dto);
     }
 
@@ -59,9 +61,11 @@ export class LoanApplicationService {
     dto: CreateApplicationDto,
   ): Promise<void> {
     const startMs = Date.now();
+    console.log(`[AutoApprove] ${applicationId} — iniciando (timeout=${AUTO_APPROVE_TIMEOUT_MS}ms)`);
 
     try {
       // --- 1. Verificación de fraude ---
+      console.log(`[AutoApprove] ${applicationId} — llamando fraud-detection`);
       const fraud = await this.callFraud(applicationId, dto.dni);
       if (!fraud.passed) {
         await this.setStatus(applicationId, 'REJECTED', {
@@ -73,6 +77,7 @@ export class LoanApplicationService {
 
       // --- 2. Scoring ---
       const elapsed = Date.now() - startMs;
+      console.log(`[AutoApprove] ${applicationId} — fraude OK, elapsed=${elapsed}ms, llamando scoring`);
       const scoringTimeoutMs = AUTO_APPROVE_TIMEOUT_MS - elapsed - 5_000; // 5 s de margen
 
       if (scoringTimeoutMs <= 0) {
@@ -85,6 +90,7 @@ export class LoanApplicationService {
       const scoring = await this.callScoring(applicationId, dto.dni, dto.amount, scoringTimeoutMs);
 
       const totalElapsed = Date.now() - startMs;
+      console.log(`[AutoApprove] ${applicationId} — score=${scoring.score}, totalElapsed=${totalElapsed}ms`);
 
       // --- 3. Decisión ---
       if (scoring.score >= AUTO_APPROVE_MIN_SCORE && totalElapsed < AUTO_APPROVE_TIMEOUT_MS) {
