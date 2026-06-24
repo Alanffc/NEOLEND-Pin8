@@ -10,6 +10,7 @@ export function getPool(): Pool {
 }
 
 export async function initSchema(): Promise<void> {
+  // CREATE TABLE IF NOT EXISTS es idempotente — seguro correr en cada arranque
   console.log('[DB] verificando/creando esquema loan_applications...');
   await getPool().query(`
     CREATE TABLE IF NOT EXISTS loan_applications (
