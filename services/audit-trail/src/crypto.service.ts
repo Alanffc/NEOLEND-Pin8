@@ -87,7 +87,12 @@ export class CryptoService {
       return '[' + value.map((v) => this.canonicalize(v)).join(',') + ']';
     }
     const obj = value as Record<string, unknown>;
-    const keys = Object.keys(obj).sort();
+    // Omitimos claves con valor `undefined`: JSON y el JSONB de PostgreSQL las
+    // descartan, así que para que el hash sobreviva al round-trip por la BD el
+    // canónico debe ignorarlas también.
+    const keys = Object.keys(obj)
+      .filter((k) => obj[k] !== undefined)
+      .sort();
     return (
       '{' +
       keys

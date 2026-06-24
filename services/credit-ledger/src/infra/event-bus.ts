@@ -47,6 +47,10 @@ export class EventBus implements OnModuleInit {
     this.logger.log('Conectado al Event Bus');
   }
 
+  isConnected(): boolean {
+    return this.channel !== null;
+  }
+
   publish(event: StoredEvent): void {
     if (!this.channel) return; // ya persistido; se republicará vía outbox/reproyección si hace falta
     const routingKey = ROUTING_KEYS[event.type as CreditEventType] ?? `credit.${event.type}`;

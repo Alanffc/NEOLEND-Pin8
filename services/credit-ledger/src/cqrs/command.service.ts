@@ -76,8 +76,16 @@ export class CommandService {
   private async dispatch(creditId: string, stored: StoredEvent[]): Promise<void> {
     for (const e of stored) {
       this.bus.publish(e);
-      if (e.type === 'CreditApproved' || e.type === 'CreditRejected' || e.type === 'CreditEscalated') {
-        await this.audit.record(creditId, e);
+    }
+
+    // Auditoría: si el bus no está conectado, refuerzo síncrono por HTTP para no
+    // perder la traza. Si el bus SÍ está, él alimenta la auditoría (vía única,
+    // desacoplada) y evitamos el registro duplicado.
+    if (!this.bus.isConnected()) {
+      for (const e of stored) {
+        if (e.type === 'CreditApproved' || e.type === 'CreditRejected' || e.type === 'CreditEscalated') {
+          await this.audit.record(creditId, e);
+        }
       }
     }
   }

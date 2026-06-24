@@ -38,10 +38,10 @@ services:
   db-loan:        { <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: loan }, ports: ["5433:5432"] }
   db-scoring:     { <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: scoring }, ports: ["5434:5432"] }
   db-credit:      { <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: credit }, ports: ["5435:5432"] }
-  db-disbursement:{ <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: disbursement }, ports: ["5436:5432"] }
+  db-disbursement: { <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: disbursement }, ports: ["5436:5432"] }
   db-collections: { <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: collections }, ports: ["5437:5432"] }
   db-investor:    { <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: investor }, ports: ["5438:5432"] }
-  db-gamification:{ <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: gamification }, ports: ["5439:5432"] }
+  db-gamification: { <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: gamification }, ports: ["5439:5432"] }
   db-fraud:       { <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: fraud }, ports: ["5440:5432"] }
   db-audit:       { <<: *pg-defaults, environment: { POSTGRES_USER: neolend, POSTGRES_PASSWORD: neolend, POSTGRES_DB: audit }, ports: ["5441:5432"] }
 
@@ -161,7 +161,6 @@ services:
     environment:
       DATABASE_URL: postgres://neolend:neolend@db-audit:5432/audit
       AMQP_URL: amqp://neolend:neolend@rabbitmq:5672
-      SIGNING_KEY_PATH: /run/secrets/audit_signing_key
     depends_on:
       db-audit: { condition: service_healthy }
       rabbitmq: { condition: service_healthy }
