@@ -10,6 +10,7 @@ export function getPool(): Pool {
 }
 
 export async function initSchema(): Promise<void> {
+  console.log('[DB] verificando/creando esquema loan_applications...');
   await getPool().query(`
     CREATE TABLE IF NOT EXISTS loan_applications (
       id           UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -22,4 +23,5 @@ export async function initSchema(): Promise<void> {
       updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
   `);
+  console.log('[DB] esquema listo');
 }

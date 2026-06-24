@@ -51,7 +51,9 @@ export class CircuitBreakerService {
 
   private checkRateLimit(): void {
     const now = Date.now();
+    // descarta timestamps fuera de la ventana de 1 s
     this.requestTimestamps = this.requestTimestamps.filter(t => now - t < 1000);
+    console.debug(`[CB] rate window: ${this.requestTimestamps.length}/${this.RATE_LIMIT} req/s`);
     if (this.requestTimestamps.length >= this.RATE_LIMIT) {
       throw new Error(`Rate limit: máximo ${this.RATE_LIMIT} req/s al buró`);
     }
@@ -62,6 +64,7 @@ export class CircuitBreakerService {
     this.checkRateLimit();
 
     const state = this.getState();
+    console.debug(`[CB] execute — estado actual: ${state}`);
 
     if (state === CircuitState.OPEN) {
       throw new Error('CircuitBreaker:OPEN — buró no disponible, usar caché');
@@ -97,6 +100,8 @@ export class CircuitBreakerService {
       this.halfOpenProbeInFlight = false;
       this.logger.log('Circuit HALF_OPEN → CLOSED (buró recuperado)');
     }
+    // en CLOSED onSuccess no cambia nada, solo reseteamos si hubiera conteo parcial
+    // (actualmente solo contamos fallos consecutivos, no ventana deslizante de fallos)
   }
 
   private onFailure(): void {
