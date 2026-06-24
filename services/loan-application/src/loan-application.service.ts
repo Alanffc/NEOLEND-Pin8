@@ -126,6 +126,7 @@ export class LoanApplicationService {
   }
 
   async findById(id: string): Promise<any> {
+    console.log(`[LoanApp] consultando solicitud id=${id}`);
     const { rows } = await getPool().query(
       `SELECT * FROM loan_applications WHERE id = $1`,
       [id],

@@ -36,6 +36,7 @@ export class BureauController {
     if (!dni || dni.length < 7 || dni.length > 12) {
       throw new HttpException('Formato de DNI inválido', HttpStatus.BAD_REQUEST);
     }
+    console.log(`[BureauController] GET /bureau/${dni.slice(0, 3)}*** — circuit: ${this.cb.status().state}`);
     try {
       return await this.bureauService.getReport(dni);
     } catch (err) {
@@ -49,6 +50,7 @@ export class BureauController {
   /** Invalida la caché de un DNI (útil cuando el buró emite un reporte nuevo) */
   @Delete('bureau/:dni/cache')
   async invalidateCache(@Param('dni') dni: string) {
+    console.log(`[BureauController] DELETE /bureau/${dni.slice(0, 3)}***/cache`);
     await this.cache.invalidate(dni);
     return { invalidated: true, dni };
   }

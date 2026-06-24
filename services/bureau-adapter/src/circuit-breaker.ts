@@ -35,6 +35,7 @@ export class CircuitBreakerService {
     this.failureThreshold = parseInt(process.env.CB_FAILURE_THRESHOLD ?? '5', 10);
     this.callTimeoutMs    = parseInt(process.env.CB_TIMEOUT_MS          ?? '5000', 10);
     this.resetAfterMs     = parseInt(process.env.CB_RESET_MS            ?? '30000', 10);
+    console.log(`[CB] config — threshold=${this.failureThreshold} timeout=${this.callTimeoutMs}ms reset=${this.resetAfterMs}ms`);
   }
 
   getState(): CircuitState {
@@ -45,6 +46,7 @@ export class CircuitBreakerService {
       this.state = CircuitState.HALF_OPEN;
       this.halfOpenProbeInFlight = false;
       this.logger.log('Circuit OPEN → HALF_OPEN (probe window open)');
+      console.log(`[CB] transición a HALF_OPEN tras ${this.resetAfterMs}ms de cooldown`);
     }
     return this.state;
   }

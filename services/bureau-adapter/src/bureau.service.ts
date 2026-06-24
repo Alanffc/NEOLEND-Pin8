@@ -57,7 +57,7 @@ export class BureauService {
    */
   private async callSoapBureau(dni: string): Promise<BureauReport> {
     const latencyMs = 8_000 + Math.random() * 7_000;
-    // TODO: reemplazar simulación con node-soap cuando tengamos credenciales del buró
+    // TODO: reemplazar con node-soap apuntando a process.env.BUREAU_SOAP_URL
     console.log(`[BureauService] llamando SOAP (latencia simulada: ${latencyMs.toFixed(0)} ms)`);
     await new Promise(r => setTimeout(r, latencyMs));
 
