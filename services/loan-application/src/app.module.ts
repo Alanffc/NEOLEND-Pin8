@@ -20,5 +20,6 @@ export class AppModule implements OnModuleInit {
     // Escucha decisiones del credit-ledger (idempotente por applicationId)
     await subscribe('credit.approved', (p) => this.loanService.onCreditApproved(p));
     await subscribe('credit.rejected', (p) => this.loanService.onCreditRejected(p));
+    this.logger.log('Suscripciones RabbitMQ activas: credit.approved, credit.rejected');
   }
 }
