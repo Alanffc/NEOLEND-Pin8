@@ -28,7 +28,11 @@ export class CacheService implements OnModuleDestroy {
 
   async get(dni: string): Promise<BureauReport | null> {
     const raw = await this.redis.get(this.key(dni));
-    if (!raw) return null;
+    if (!raw) {
+      this.logger.debug(`cache MISS para DNI ${dni.slice(0, 3)}***`);
+      return null;
+    }
+    this.logger.debug(`cache HIT para DNI ${dni.slice(0, 3)}***`);
     const report = JSON.parse(raw) as BureauReport;
     report.cached = true;
     return report;
@@ -41,10 +45,12 @@ export class CacheService implements OnModuleDestroy {
       'EX',
       TTL_SECONDS,
     );
+    this.logger.debug(`reporte guardado en caché (TTL ${TTL_SECONDS}s) — DNI ${dni.slice(0, 3)}***`);
   }
 
   async invalidate(dni: string): Promise<void> {
     await this.redis.del(this.key(dni));
+    this.logger.debug(`caché invalidada para DNI ${dni.slice(0, 3)}***`);
   }
 
   private key(dni: string): string {
