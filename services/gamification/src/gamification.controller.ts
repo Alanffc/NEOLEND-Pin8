@@ -1,9 +1,9 @@
 import {
   Controller, Get, Post, Body, Param, Query, HttpCode, Logger,
 } from '@nestjs/common';
-import { CourseService } from '../services/course.service';
-import { ProgressService } from '../services/progress.service';
-import { EnrollCourseDto, CompleteLessonDto } from '../dto/gamification.dto';
+import { CourseService } from './services/course.service';
+import { ProgressService } from './services/progress.service';
+import { EnrollCourseDto, CompleteLessonDto } from './dto/gamification.dto';
 
 /**
  * Controller REST del módulo de educación financiera gamificado (inciso VIII).

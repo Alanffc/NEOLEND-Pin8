@@ -24,7 +24,10 @@ export async function getChannel(): Promise<amqplib.Channel> {
   return channel;
 }
 
-export async function publish(routingKey: string, payload: object & { correlationId?: string }): Promise<void> {
+export async function publish(
+  routingKey: string,
+  payload: Record<string, any> & { correlationId?: string },
+): Promise<void> {
   const ch = await getChannel();
   const envelope = {
     eventId: crypto.randomUUID(),

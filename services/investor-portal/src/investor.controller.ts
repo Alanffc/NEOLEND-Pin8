@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Post, Body, Query, HttpCode, Logger } from '@nestjs/common';
-import { PortfolioService } from '../services/portfolio.service';
-import { EventConsumerService } from '../services/event-consumer.service';
-import { EventEnvelope } from '../dto/event-envelope.dto';
+import { PortfolioService } from './services/portfolio.service';
+import { EventConsumerService } from './services/event-consumer.service';
+import { EventEnvelope } from './dto/event-envelope.dto';
 
 /**
  * Controller REST del Portal de Inversionistas.
