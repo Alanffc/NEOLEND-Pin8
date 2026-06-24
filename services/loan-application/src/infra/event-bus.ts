@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import * as amqplib from 'amqplib';
 
 const logger = new Logger('EventBus');
+// exchange tipo "topic" — permite routing keys con wildcards (ej. credit.*)
 const EXCHANGE = 'neolend.events';
 
 let channel: amqplib.Channel | null = null;
@@ -43,6 +44,7 @@ export async function publish(
   ch.publish(EXCHANGE, routingKey, Buffer.from(JSON.stringify(envelope)), {
     persistent: true,
   });
+  logger.debug(`publicado ${routingKey} — eventId=${envelope.eventId}`);
 }
 
 export async function subscribe(
