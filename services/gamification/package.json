@@ -1,7 +1,9 @@
 {
   "name": "neolend-gamification",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "description": "Módulo de educación financiera gamificado — NeoLend Financial Corp. Cursos, XP, niveles, logros y bonificaciones de score/tasa.",
+  "author": "Christian Coronel",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/main.js",
@@ -12,10 +14,12 @@
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
     "reflect-metadata": "^0.2.0",
-    "rxjs": "^7.8.0"
+    "rxjs": "^7.8.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "@types/uuid": "^9.0.0",
     "ts-node": "^10.9.0",
     "typescript": "^5.4.0"
   }
