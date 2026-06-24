@@ -1,21 +1,26 @@
 {
   "name": "neolend-investor-portal",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "description": "Portal de inversionistas en tiempo real — NeoLend Financial Corp. Métricas: TIR, morosidad, flujo de caja, exposición al riesgo.",
+  "author": "Christian Coronel",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/main.js",
-    "start:dev": "ts-node src/main.ts"
+    "start:dev": "ts-node src/main.ts",
+    "seed": "ts-node src/mocks/portfolio-mock.data.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
     "reflect-metadata": "^0.2.0",
-    "rxjs": "^7.8.0"
+    "rxjs": "^7.8.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "@types/uuid": "^9.0.0",
     "ts-node": "^10.9.0",
     "typescript": "^5.4.0"
   }

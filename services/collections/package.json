@@ -1,22 +1,13 @@
 {
-  "name": "neolend-collections",
-  "version": "0.1.0",
-  "private": true,
+  "name": "collections-service",
+  "version": "1.0.0",
+  "description": "Microservicio de Cobranza para NeoLend",
+  "main": "src/app.js",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "start": "node dist/main.js",
-    "start:dev": "ts-node src/main.ts"
+    "start": "node src/app.js"
   },
   "dependencies": {
-    "@nestjs/common": "^10.0.0",
-    "@nestjs/core": "^10.0.0",
-    "@nestjs/platform-express": "^10.0.0",
-    "reflect-metadata": "^0.2.0",
-    "rxjs": "^7.8.0"
-  },
-  "devDependencies": {
-    "@types/node": "^20.0.0",
-    "ts-node": "^10.9.0",
-    "typescript": "^5.4.0"
+    "express": "^4.18.2",
+    "uuid": "^9.0.1"
   }
 }

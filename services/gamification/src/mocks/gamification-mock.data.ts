@@ -1,0 +1,285 @@
+import { v4 as uuidv4 } from 'uuid';
+
+/**
+ * Datos mock para el módulo de gamificación.
+ * Catálogo de cursos de educación financiera, logros y perfiles de usuario.
+ * Se reemplazará por datos de PostgreSQL en integración.
+ */
+
+/** Catálogo completo de cursos de educación financiera */
+export const MOCK_COURSES = [
+  {
+    id: 'course-001',
+    title: 'Fundamentos del Ahorro',
+    description: 'Aprende las bases del ahorro personal: la regla 50/30/20, fondo de emergencia y metas financieras. Incluye ejercicios prácticos para crear tu primer presupuesto.',
+    category: 'ahorro',
+    difficulty: 'basico',
+    scoreBonus: 15,
+    interestRateBonus: 0.25,
+    totalLessons: 5,
+    durationMinutes: 25,
+    iconUrl: '💰',
+    isActive: true,
+    sortOrder: 1,
+  },
+  {
+    id: 'course-002',
+    title: '¿Qué es el Crédito?',
+    description: 'Entiende cómo funciona el crédito, qué es la tasa de interés, el CAT y cómo leer tu estado de cuenta. Conoce tus derechos como deudor.',
+    category: 'credito',
+    difficulty: 'basico',
+    scoreBonus: 20,
+    interestRateBonus: 0.50,
+    totalLessons: 6,
+    durationMinutes: 30,
+    iconUrl: '💳',
+    isActive: true,
+    sortOrder: 2,
+  },
+  {
+    id: 'course-003',
+    title: 'Presupuesto Inteligente',
+    description: 'Domina técnicas de presupuesto: método de sobres, apps de control de gastos, categorización de gastos hormiga y planificación mensual.',
+    category: 'presupuesto',
+    difficulty: 'basico',
+    scoreBonus: 15,
+    interestRateBonus: 0.25,
+    totalLessons: 4,
+    durationMinutes: 20,
+    iconUrl: '📊',
+    isActive: true,
+    sortOrder: 3,
+  },
+  {
+    id: 'course-004',
+    title: 'Manejo de Deudas',
+    description: 'Estrategias para salir de deudas: método bola de nieve, método avalancha, consolidación de deudas y negociación con acreedores.',
+    category: 'deuda',
+    difficulty: 'intermedio',
+    scoreBonus: 25,
+    interestRateBonus: 0.75,
+    totalLessons: 7,
+    durationMinutes: 40,
+    iconUrl: '🔓',
+    isActive: true,
+    sortOrder: 4,
+  },
+  {
+    id: 'course-005',
+    title: 'Inversiones para Principiantes',
+    description: 'Introducción al mundo de las inversiones: renta fija vs variable, fondos de inversión, diversificación y perfil de riesgo.',
+    category: 'inversion',
+    difficulty: 'intermedio',
+    scoreBonus: 30,
+    interestRateBonus: 0.50,
+    totalLessons: 8,
+    durationMinutes: 45,
+    iconUrl: '📈',
+    isActive: true,
+    sortOrder: 5,
+  },
+  {
+    id: 'course-006',
+    title: 'Score Crediticio Avanzado',
+    description: 'Comprende en profundidad cómo se calcula tu score, los factores que lo afectan y estrategias avanzadas para mejorarlo.',
+    category: 'credito',
+    difficulty: 'avanzado',
+    scoreBonus: 40,
+    interestRateBonus: 1.00,
+    totalLessons: 10,
+    durationMinutes: 60,
+    iconUrl: '🏆',
+    isActive: true,
+    sortOrder: 6,
+  },
+  {
+    id: 'course-007',
+    title: 'Protección Financiera',
+    description: 'Seguros, protección contra fraude digital, ingeniería social y cómo proteger tu patrimonio. Incluye checklist de seguridad.',
+    category: 'ahorro',
+    difficulty: 'intermedio',
+    scoreBonus: 20,
+    interestRateBonus: 0.25,
+    totalLessons: 6,
+    durationMinutes: 35,
+    iconUrl: '🛡️',
+    isActive: true,
+    sortOrder: 7,
+  },
+  {
+    id: 'course-008',
+    title: 'Planificación para el Retiro',
+    description: 'Aprende sobre AFORE, PPR, cálculo de pensión y estrategias de ahorro a largo plazo para un retiro digno.',
+    category: 'inversion',
+    difficulty: 'avanzado',
+    scoreBonus: 35,
+    interestRateBonus: 0.75,
+    totalLessons: 9,
+    durationMinutes: 55,
+    iconUrl: '🏖️',
+    isActive: true,
+    sortOrder: 8,
+  },
+];
+
+/** Catálogo de logros/badges del sistema */
+export const MOCK_ACHIEVEMENTS = [
+  {
+    id: 'ach-001',
+    code: 'FIRST_LESSON',
+    name: 'Primer Paso',
+    description: 'Completaste tu primera lección de educación financiera',
+    iconUrl: '⭐',
+    category: 'aprendizaje',
+    xpReward: 25,
+    condition: { lessonsCompleted: 1 },
+  },
+  {
+    id: 'ach-002',
+    code: 'FIRST_COURSE',
+    name: 'Estudiante Dedicado',
+    description: 'Completaste tu primer curso completo',
+    iconUrl: '📚',
+    category: 'aprendizaje',
+    xpReward: 100,
+    condition: { coursesCompleted: 1 },
+  },
+  {
+    id: 'ach-003',
+    code: 'THREE_COURSES',
+    name: 'Conocimiento Financiero',
+    description: 'Has completado 3 cursos de educación financiera',
+    iconUrl: '🎓',
+    category: 'aprendizaje',
+    xpReward: 250,
+    condition: { coursesCompleted: 3 },
+  },
+  {
+    id: 'ach-004',
+    code: 'ALL_COURSES',
+    name: 'Experto Financiero',
+    description: '¡Has completado todos los cursos disponibles!',
+    iconUrl: '👨‍🎓',
+    category: 'aprendizaje',
+    xpReward: 500,
+    condition: { coursesCompleted: 8 },
+  },
+  {
+    id: 'ach-005',
+    code: 'STREAK_7',
+    name: 'Racha Semanal',
+    description: '7 días consecutivos de actividad en la plataforma',
+    iconUrl: '🔥',
+    category: 'racha',
+    xpReward: 75,
+    condition: { streak: 7 },
+  },
+  {
+    id: 'ach-006',
+    code: 'STREAK_30',
+    name: 'Compromiso Mensual',
+    description: '30 días consecutivos de actividad',
+    iconUrl: '💪',
+    category: 'racha',
+    xpReward: 200,
+    condition: { streak: 30 },
+  },
+  {
+    id: 'ach-007',
+    code: 'PERFECT_QUIZ',
+    name: 'Perfeccionista',
+    description: 'Obtuviste 100% en un quiz de curso',
+    iconUrl: '💯',
+    category: 'aprendizaje',
+    xpReward: 150,
+    condition: { quizScore: 100 },
+  },
+  {
+    id: 'ach-008',
+    code: 'ON_TIME_PAYMENT',
+    name: 'Pago Puntual',
+    description: 'Realizaste tu primer pago a tiempo',
+    iconUrl: '✅',
+    category: 'pago',
+    xpReward: 50,
+    condition: { onTimePayments: 1 },
+  },
+  {
+    id: 'ach-009',
+    code: 'LEVEL_5',
+    name: 'Nivel Intermedio',
+    description: 'Alcanzaste el nivel 5 en gamificación',
+    iconUrl: '🌟',
+    category: 'aprendizaje',
+    xpReward: 100,
+    condition: { level: 5 },
+  },
+  {
+    id: 'ach-010',
+    code: 'LEVEL_10',
+    name: 'Maestro Financiero',
+    description: 'Alcanzaste el nivel máximo: 10',
+    iconUrl: '👑',
+    category: 'aprendizaje',
+    xpReward: 500,
+    condition: { level: 10 },
+  },
+];
+
+/** Genera perfiles de usuario mock */
+export function generateMockUserProfiles(count: number = 10) {
+  const names = [
+    'Carlos Mendoza', 'María García', 'Juan Pérez', 'Ana López',
+    'Roberto Sánchez', 'Laura Torres', 'Diego Ramírez', 'Sofía Hernández',
+    'Andrés Morales', 'Valentina Cruz',
+  ];
+
+  return names.slice(0, count).map((name, idx) => ({
+    id: `profile-${idx + 1}`,
+    userId: `user-${String(idx + 1).padStart(3, '0')}`,
+    displayName: name,
+    level: Math.min(10, 1 + Math.floor(idx * 1.2)),
+    totalXp: idx * 350 + Math.floor(Math.random() * 200),
+    xpToNextLevel: 100 * (1 + Math.floor(idx * 1.2)),
+    totalScoreBonus: idx * 15 + Math.floor(Math.random() * 20),
+    totalInterestBonus: parseFloat((idx * 0.3 + Math.random() * 0.5).toFixed(2)),
+    coursesCompleted: Math.min(8, Math.floor(idx * 0.8)),
+    streak: Math.floor(Math.random() * 45),
+    achievements: MOCK_ACHIEVEMENTS.slice(0, Math.min(10, idx + 1)).map((a) => a.code),
+    lastActivityAt: new Date(),
+  }));
+}
+
+/** Genera progreso de usuario en cursos */
+export function generateMockProgress(userId: string) {
+  return MOCK_COURSES.map((course, idx) => {
+    const lessonsCompleted = Math.min(course.totalLessons, Math.floor(Math.random() * (course.totalLessons + 1)));
+    const isCompleted = lessonsCompleted === course.totalLessons;
+    return {
+      id: `progress-${userId}-${idx}`,
+      userId,
+      courseId: course.id,
+      lessonsCompleted,
+      totalLessons: course.totalLessons,
+      progressPercentage: parseFloat(((lessonsCompleted / course.totalLessons) * 100).toFixed(2)),
+      quizScore: isCompleted ? 70 + Math.random() * 30 : 0,
+      status: isCompleted ? 'completado' : lessonsCompleted > 0 ? 'en_progreso' : 'no_iniciado',
+      completedAt: isCompleted ? new Date() : null,
+      bonusAwarded: isCompleted,
+    };
+  });
+}
+
+/** Tabla de niveles y XP requerido */
+export const LEVEL_TABLE = [
+  { level: 1, xpRequired: 0, title: 'Novato Financiero' },
+  { level: 2, xpRequired: 100, title: 'Aprendiz' },
+  { level: 3, xpRequired: 300, title: 'Estudiante' },
+  { level: 4, xpRequired: 600, title: 'Conocedor' },
+  { level: 5, xpRequired: 1000, title: 'Intermedio' },
+  { level: 6, xpRequired: 1500, title: 'Avanzado' },
+  { level: 7, xpRequired: 2200, title: 'Especialista' },
+  { level: 8, xpRequired: 3000, title: 'Experto' },
+  { level: 9, xpRequired: 4000, title: 'Maestro' },
+  { level: 10, xpRequired: 5500, title: 'Gurú Financiero' },
+];
