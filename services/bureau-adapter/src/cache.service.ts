@@ -54,6 +54,7 @@ export class CacheService implements OnModuleDestroy {
   }
 
   private key(dni: string): string {
+    // prefijo "bureau:" permite convivir con otras claves Redis del sistema
     return `bureau:${dni}`;
   }
 
