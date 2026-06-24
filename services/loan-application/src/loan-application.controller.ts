@@ -30,6 +30,7 @@ export class LoanApplicationController {
     if (!body.amount || body.amount <= 0)
       throw new BadRequestException('amount debe ser > 0');
 
+    console.log(`[Controller] POST /applications amount=$${body.amount}`);
     return this.service.submit(body);
   }
 
